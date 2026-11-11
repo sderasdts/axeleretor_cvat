@@ -1,0 +1,9 @@
+data/
+outputs/
+logs/
+*.pt
+*.mp4
+*.avi
+*.mov
+__pycache__/
+.venv/
