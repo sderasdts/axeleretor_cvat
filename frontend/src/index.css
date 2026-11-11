@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #F6CE45;
+
+  --color-ink: #1A1A1A;
+  --color-ink-800: #2B2B2B;
+  --color-ink-700: #333333;
+
+  --color-muted: #5F5F5F;
+  --color-surface: #F4F4F2;
+  --color-line: #E4E4E4;
+
+  --color-risk-high-bg: #FDECEC;
+  --color-risk-high-fg: #B42318;
+  --color-risk-mid-bg: #FEF3C7;
+  --color-risk-mid-fg: #8A5A00;
+  --color-risk-ok-bg: #E3F6EC;
+  --color-risk-ok-fg: #17663F;
+
+  --font-sans: "IBM Plex Sans", Arial, sans-serif;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  body {
+    @apply bg-surface text-ink font-sans antialiased;
+  }
+}
