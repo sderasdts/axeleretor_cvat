@@ -1,11 +1,55 @@
+
 services:
   db:
     image: postgres:16
+    container_name: ppe-db
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: ppe
-      POSTGRES_USER: ppe
-      POSTGRES_PASSWORD: ppe
-    ports: ["5433:5432"]
-    volumes: [pgdata:/var/lib/postgresql/data]
+      POSTGRES_DB: ${DB_NAME:-ppe}
+      POSTGRES_USER: ${DB_USER:-ppe}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ppe}
+    ports:
+      - "${DB_HOST_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data   
+    networks:
+      - ppe-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: ppe-backend
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ${DB_NAME:-ppe}
+      DB_USER: ${DB_USER:-ppe}
+      DB_PASSWORD: ${DB_PASSWORD:-ppe}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-me}
+      DEBUG: ${DEBUG:-1}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app   
+    depends_on:
+      db:
+        condition: service_healthy   # backend стартует только после того, как БД готова
+    networks:
+      - ppe-net
+
+networks:
+  ppe-net:
+    name: ppe-net
+    driver: bridge
+
 volumes:
   pgdata:

@@ -2,9 +2,23 @@
 
 Система распознавания СИЗ по видеопотоку.
 
-## Запуск backend
+## Запуск backend + PostgreSQL в Docker (рекомендуется)
 ```bash
-docker compose up -d
+cp .env.example .env
+docker compose up -d --build
+docker compose exec backend python manage.py check_db      # проверка подключения к БД
+docker compose exec backend python manage.py createsuperuser
+```
+
+| | Хост | Порт | БД / логин / пароль |
+|---|---|---|---|
+| PostgreSQL из контейнеров | `db` | `5432` | `ppe` / `ppe` / `ppe` |
+| PostgreSQL с компьютера | `localhost` | `5433` | `ppe` / `ppe` / `ppe` |
+| Backend | `localhost` | `8000` | — |
+
+## Запуск backend локально (база в Docker)
+```bash
+docker compose up -d db
 python -m venv .venv && source .venv/Scripts/activate
 pip install -r backend/requirements.txt
 cp .env.example .env
